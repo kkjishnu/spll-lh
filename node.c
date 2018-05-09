@@ -13,7 +13,7 @@
 #include <netinet/in.h>
 #include <string.h>
 
-int communication_channel_send(char *payload, int psize, char *address, char *buffer, int bsize)
+int communication_channel_send(char *payload, int psize, uint32_t address, char *buffer, int bsize)
 {
     //protocol_reset();
     struct sockaddr_in addr;
@@ -27,11 +27,14 @@ int communication_channel_send(char *payload, int psize, char *address, char *bu
     memset(&server_address, '0', sizeof(server_address));
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(2500);
-    if (inet_pton(AF_INET, address, &server_address.sin_addr) <= 0)
+    
+    server_address.sin_addr.s_addr = htonl(address);
+    /*if (inet_pton(AF_INET, address, &server_address.sin_addr) <= 0)
     {
         debug_write("error setting server address...\n");
         return 1;
-    }
+    }*/
+    //printf("%lu",server_address.sin_addr.s_addr);
     if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
     {
         debug_write("error connecting to the server...\n");
@@ -141,5 +144,6 @@ int check_for_routing_table()
 }
 void setup_routing_table(uint16_t nsize)
 {
-    p = (struct routing_table_row **)malloc(nsize * (sizeof(struct routing_table_row)));
+    number_of_rows = nsize;
+    routing_table = malloc(nsize * (sizeof(struct routing_table_row)));
 }

@@ -1,7 +1,8 @@
 #include "protocol.h"
 #include "node.h"
+#include "algorithms.h"
 #include <string.h>
-
+#include <arpa/inet.h>
 int cmd_data(char *packet, char *buffer, int dsize)
 {
     memcpy(protocol_response, "Data Received!", 14);
@@ -25,14 +26,20 @@ int protocol_process(char *packet, char *buffer)
             debug_write(buffer);
             return cmd_data(packet, buffer, 200);
         }
+        if (memcmp("MESREQ", cmd, 6) == 0)
+        {
+            
+        }
     }
     else
     {
         debug_write("data to ");
         debug_write(address);
-        communication_channel_send(packet,1024,address,buffer,1024);
-        memcpy(protocol_response, buffer, 14);
-        protocol_reset();
+        uint32_t nh;
+        get_next_hop(inet_addr(address), &nh);
+        communication_channel_send(packet, 1024, nh, buffer, 1024);
+        memcpy(protocol_response, buffer, 1024);
+        //protocol_reset();
         return 0;
     }
 

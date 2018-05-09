@@ -20,9 +20,10 @@ struct routing_table_row {
     uint16_t next_hop_port;
 };
 
-struct routing_table_row **p;
+uint16_t number_of_rows;
+struct routing_table_row *routing_table;
 
-int communication_channel_send(char *payload, int psize, char *address,char *buffer,int bsize);
+int communication_channel_send(char *payload, int psize, uint32_t address,char *buffer,int bsize);
 int communication_channel_read(char *buffer,int bsize,int msg_, char *msg,int forever);
 int get_battery();
 void get_position(uint16_t *position);

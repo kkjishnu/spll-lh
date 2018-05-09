@@ -1,6 +1,6 @@
 import socket
 
-address = b"10.50.6.203"
+address = b"127.0.0.1"
 address = address + bytes(15-len(address))
 cmd = b"DATA"
 cmd = cmd+bytes(6-len(cmd))
