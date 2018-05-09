@@ -15,7 +15,7 @@
 
 int communication_channel_send(char *payload, int psize, char *address, char *buffer, int bsize)
 {
-    protocol_reset();
+    //protocol_reset();
     struct sockaddr_in addr;
     struct sockaddr_in server_address;
     int sock = 0;

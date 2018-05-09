@@ -31,6 +31,8 @@ int protocol_process(char *packet, char *buffer)
         debug_write("data to ");
         debug_write(address);
         communication_channel_send(packet,1024,address,buffer,1024);
+        memcpy(protocol_response, buffer, 14);
+        protocol_reset();
         return 0;
     }
 
