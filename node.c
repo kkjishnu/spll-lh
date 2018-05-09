@@ -1,5 +1,6 @@
 #include "main.h"
 #include "node.h"
+#include "protocol.h"
 #include <stdint.h>
 #include <stdio.h> // API specific includes
 #include <stdlib.h>
@@ -11,8 +12,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+
 int communication_channel_send(char *payload, int psize, char *address, char *buffer, int bsize)
 {
+    protocol_reset();
     struct sockaddr_in addr;
     struct sockaddr_in server_address;
     int sock = 0;
@@ -41,11 +44,12 @@ int communication_channel_send(char *payload, int psize, char *address, char *bu
 }
 int communication_channel_read(char *buffer, int bsize, int msg_, char *msg, int forever)
 {
+    protocol_reset();
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
-    if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) == 0)
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         debug_write("socket failed...");
         return 1;
@@ -78,9 +82,10 @@ int communication_channel_read(char *buffer, int bsize, int msg_, char *msg, int
             return 1;
         }
         valread = read(new_socket, buffer, bsize);
+        protocol_process(buffer,protocol_buffer);
         if (msg_)
         {
-            send(new_socket, msg, strlen(msg), 0);
+            send(new_socket, protocol_response, strlen(msg), 0);
         }
         else
         {
@@ -121,6 +126,8 @@ void get_position(uint16_t *position)
 // this function used the above defined funtions so this function will not depend on the device.
 int initialize_node_information(struct node_information *n_i)
 {
+    memset(n_i->address,0,15);
+    memcpy(n_i->address,"127.0.0.1",9);
     n_i->battery_percentage = get_battery();
     uint16_t position[3];
     get_position(position);

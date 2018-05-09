@@ -4,6 +4,6 @@
         "main.h": "c",
         "node.h": "c"
     },
-    "python.formatting.provider": "yapf",
+    "python.formatting.provider": "autopep8",
     "python.pythonPath": "/usr/bin/python3"
 }

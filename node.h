@@ -2,6 +2,7 @@
 #include <stdint.h>
 
 struct node_information {
+    char address[15];
     uint8_t battery_percentage;
     uint32_t position_x;
     uint32_t position_y;
