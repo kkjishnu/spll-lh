@@ -15,7 +15,7 @@
 
 int communication_channel_send(char *payload, int psize, uint32_t address, char *buffer, int bsize)
 {
-    write(1,payload,psize);
+    //write(1,payload,psize);
     //protocol_reset();
     struct sockaddr_in addr;
     struct sockaddr_in server_address;
@@ -89,7 +89,7 @@ int communication_channel_read(char *buffer, int bsize, int msg_, char *msg, int
         protocol_process(buffer,protocol_buffer);
         if (msg_)
         {
-            send(new_socket, protocol_response, strlen(msg), 0);
+            send(new_socket, protocol_response,protocol_response_length, 0);
         }
         else
         {
