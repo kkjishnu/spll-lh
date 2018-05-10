@@ -4,7 +4,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 int cmd_data(char *packet, char *buffer, int dsize)
-{
+{   
     memcpy(protocol_response, "Data Received!", 14);
     return 14;
 }
