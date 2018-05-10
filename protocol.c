@@ -2,49 +2,36 @@
 #include "node.h"
 #include "algorithms.h"
 #include <string.h>
+#include <stdio.h>
 #include <arpa/inet.h>
-int cmd_data(char *packet, char *buffer, int dsize)
-{   
-    memcpy(protocol_response, "Data Received!", 14);
-    return 14;
-}
+
+uint32_t protocol_address = 0;
+uint16_t protocol_data_length = 0;
+uint8_t protocol_cmd = 0 ;
 
 int protocol_process(char *packet, char *buffer)
 {
-
-    char cmd[6];
-    char address[15];
-    char destination[15];
-    memcpy(cmd, packet + 15, 6);
-    memcpy(address, packet, 15);
-    memcpy(buffer, packet + 21, 200);
-
-    if (memcmp(address, n_i.address, 15) == 0)
-    {
-        if (memcmp("DATA", cmd, 4) == 0)
-        {
-            debug_write(buffer);
-            return cmd_data(packet, buffer, 200);
-        }
-        if (memcmp("MESREQ", cmd, 6) == 0)
-        {
-            
-        }
+    
+    protocol_address = (packet[0] << 24) | (packet[1] << 16) | (packet[2] << 8) | packet[3];
+    protocol_cmd = packet[4];
+    printf("%d",protocol_cmd);
+    protocol_data_length = (packet[5] << 8) | packet[6];
+    memcpy(protocol_data, packet + 7, protocol_data_length);
+    //debug_write((char)protocol_cmd);
+    switch(protocol_cmd){
+        case 'A':
+            debug_write(protocol_data);
+            memcpy(protocol_response,DATA_RESPONSE,strlen(DATA_RESPONSE));
+            break;
+        case 'B':
+            debug_write("Updating Routing Table!");
+            memcpy(protocol_response,ROUTING_TABLE_UPDATE_RESPONSE,strlen(ROUTING_TABLE_UPDATE_RESPONSE));
+            break;
+        default:
+            memcpy(protocol_response,"BAD REQUEST!",12);
+            break;
     }
-    else
-    {
-        debug_write("data to ");
-        debug_write(address);
-        uint32_t nh;
-        get_next_hop(inet_addr(address), &nh);
-        communication_channel_send(packet, 1024, nh, buffer, 1024);
-        memcpy(protocol_response, buffer, 1024);
-        //protocol_reset();
-        return 0;
-    }
-
-    memcpy(protocol_response, "BAD Packet!", 11);
-    return 1;
+    return 0;
 }
 
 void protocol_reset()

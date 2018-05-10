@@ -15,6 +15,7 @@
 
 int communication_channel_send(char *payload, int psize, uint32_t address, char *buffer, int bsize)
 {
+    write(1,payload,psize);
     //protocol_reset();
     struct sockaddr_in addr;
     struct sockaddr_in server_address;
@@ -129,8 +130,7 @@ void get_position(uint16_t *position)
 // this function used the above defined funtions so this function will not depend on the device.
 int initialize_node_information(struct node_information *n_i)
 {
-    memset(n_i->address,0,15);
-    memcpy(n_i->address,"127.0.0.1",9);
+    n_i->address = 2130706433;
     n_i->battery_percentage = get_battery();
     uint16_t position[3];
     get_position(position);
