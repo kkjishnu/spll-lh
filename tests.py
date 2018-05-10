@@ -1,8 +1,8 @@
 import socket
 
-#address = 2130706433
+address = 2130706433
 #address = 168296452
-address = 3232246638
+#address = 3232246638
 address = address.to_bytes(4, 'big')
 cmd = b"A"
 data = b"GreatData!"

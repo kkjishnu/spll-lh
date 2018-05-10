@@ -103,4 +103,5 @@ void protocol_reset()
     memset(protocol_packet, 0, 1024);
     memset(protocol_buffer, 0, 1024);
     memset(protocol_response, 0, 1024);
+    memset(protocol_data,0,1012);
 }
