@@ -1,7 +1,8 @@
 import socket
 
 #address = 2130706433
-address = 168296452
+#address = 168296452
+address = 3232246638
 address = address.to_bytes(4, 'big')
 cmd = b"A"
 data = b"GreatData!"
@@ -33,8 +34,10 @@ def route_soc(address_list):
         address_list[i] = address_list[i].to_bytes(4,'big')
     for i in address_list:
         data += i
+    print(len(data))
     datalen = len(data).to_bytes(2, 'big')
     packet = address+cmd+datalen+data
+    print(packet)
     ret = soc(packet)
     return ret
 

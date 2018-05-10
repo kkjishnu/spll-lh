@@ -13,8 +13,7 @@ uint16_t protocol_response_length = 0;
 
 int protocol_process(char *packet, char *buffer)
 {
-
-    protocol_address = (packet[0] << 24) | (packet[1] << 16) | (packet[2] << 8) | packet[3];
+    protocol_address = ((uint8_t)packet[0] << 24) | ((uint8_t)packet[1] << 16) | ((uint8_t)packet[2] << 8) | (uint8_t)packet[3];
     protocol_cmd = packet[4];
     //printf("%d",protocol_cmd);
     protocol_data_length = (packet[5] << 8) | packet[6];
@@ -29,10 +28,12 @@ int protocol_process(char *packet, char *buffer)
             protocol_response_length = strlen(SET_ROUTING_TABLE_RESPONSE);
             return 0;
         }
-        printf("sending to hop: %d\n", protocol_address);
-        fflush(stdout);
+
         uint32_t nh;
         get_next_hop(protocol_address, &nh);
+        printf("sending to hop: %lu\n", nh);
+        printf("%d" ,7+protocol_data_length);
+        fflush(stdout);
         communication_channel_send(packet, 7 + protocol_data_length, nh, protocol_buffer, 1024);
         return 0;
     }
@@ -56,10 +57,10 @@ int protocol_process(char *packet, char *buffer)
         setup_routing_table(table_len);
         for (i = 0; i < table_len; i++)
         {
-            uint32_t dest_ip;
-            uint32_t hop_ip;
-            dest_ip = (protocol_data[(8 * i) + 2] << 24) | (protocol_data[(8 * i) + 3] << 16) | (protocol_data[(8 * i) + 4] << 8) | protocol_data[(8 * i) + 5];
-            hop_ip = (protocol_data[(8 * i) + 6] << 24) | (protocol_data[(8 * i) + 7] << 16) | (protocol_data[(8 * i) + 8] << 8) | protocol_data[(8 * i) + 9];
+            uint32_t dest_ip = 0;
+            uint32_t hop_ip = 0;
+            dest_ip = ((uint8_t)protocol_data[(8 * i) + 2] << 24) | ((uint8_t)protocol_data[(8 * i) + 3] << 16) | ((uint8_t)protocol_data[(8 * i) + 4] << 8) | (uint8_t)protocol_data[(8 * i) + 5];
+            hop_ip = ((uint8_t)protocol_data[(8 * i) + 6] << 24) | ((uint8_t)protocol_data[(8 * i) + 7] << 16) | ((uint8_t)protocol_data[(8 * i) + 8] << 8) | (uint8_t)protocol_data[(8 * i) + 9];
             routing_table[i].dest_ip = dest_ip;
             routing_table[i].next_hop_ip = hop_ip;
         }
